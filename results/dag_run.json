@@ -1,0 +1,49 @@
+{
+  "dag_id": "order_events_daily",
+  "tasks": {
+    "ingest": {
+      "bronze_rows": 6230
+    },
+    "build_staging": {
+      "stg_rows": 6230
+    },
+    "build_intermediate": {
+      "silver_rows": 6000,
+      "quarantined_rows": 80,
+      "duplicates_removed": 150,
+      "late_events": 56,
+      "quarantine_by_reason": {
+        "missing_order_id": 20,
+        "negative_amount": 20,
+        "null_amount": 20,
+        "unknown_status": 20
+      }
+    },
+    "build_marts": {
+      "fct_orders": 3197,
+      "dim_customers": 1473,
+      "mart_days": 180
+    },
+    "run_tests": {
+      "tests": {
+        "silver_event_id_unique": true,
+        "fct_order_id_unique": true,
+        "fct_amount_valid": true,
+        "bronze_reconciles": true,
+        "mart_revenue_reconciles": true,
+        "mart_no_null_dates": true
+      }
+    },
+    "publish": {
+      "paid_orders": 1747,
+      "total_revenue_paid": 442029.1,
+      "refunded_amount": 45780.28,
+      "status_breakdown": {
+        "cancelled": 323,
+        "paid": 1747,
+        "placed": 947,
+        "refunded": 180
+      }
+    }
+  }
+}
